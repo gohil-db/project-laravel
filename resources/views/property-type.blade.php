@@ -1,5 +1,7 @@
-@include('layouts1.header')     
+@extends('layoutsFront.main')
+@section('title', 'Property Types')
 
+@section('content')
         <!-- Header Start -->
         <div class="container-fluid header bg-white p-0">
             <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
@@ -19,7 +21,7 @@
             </div>
         </div>
         <!-- Header End -->
-@include('layouts1.header-search') 
+@include('layoutsFront.header-search') 
 
         <!-- Category Start -->
         <div class="container-xxl py-5">
@@ -122,4 +124,5 @@
         </div>
         <!-- Category End -->
 
-@include('layouts1.footer')
+
+@endsection

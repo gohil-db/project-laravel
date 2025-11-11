@@ -14,14 +14,6 @@ import '../lib/owlcarousel/owl.carousel.min.js';
 import '../lib/waypoints/waypoints.min.js';
 
 
-
-// window.addEventListener('load', () => {
-//   document.getElementById('spinner').style.display = 'none';
-// //   alert('Welcome to Property Selling Website!');
-// let element = document.getElementById('spinner');
-//   element.classList.remove('show');
-// });
-
 import.meta.glob([
   '../assets/img/**',
   // '../assets/json/**',

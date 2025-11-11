@@ -3,7 +3,8 @@ import laravel from 'laravel-vite-plugin';
 import html from '@rollup/plugin-html';
 import { glob } from 'glob';
 import path from 'path';
-import iconsPlugin from './vite.icons.plugin.js';
+import iconsPlugin from './vite.icons.plugin.mjs';
+
 
 
 function GetFilesArray(query) {
@@ -37,7 +38,6 @@ export default defineConfig({
             input: [
                 'resources/css/app.css', 
                 'resources/js/app.js',
-                'resources/js/app.js',
                 ...pageJsFiles,
                 ...vendorJsFiles,
                 ...LibsJsFiles,
@@ -51,7 +51,7 @@ export default defineConfig({
             refresh: true,
         }),
          html(),
-        iconsPlugin()
+        iconsPlugin(),
     ],
      resolve: {
         alias: {

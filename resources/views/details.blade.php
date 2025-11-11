@@ -1,4 +1,7 @@
-@include('layouts1.header')     
+@extends('layoutsFront.main')
+@section('title', 'Contact US')
+
+@section('content')
         <!-- Header Start -->
         <div class="container-fluid header bg-white p-0">
             <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
@@ -8,7 +11,7 @@
                         <ol class="breadcrumb text-uppercase">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
                             <!-- <li class="breadcrumb-item"><a href="#">Pages</a></li> -->
-                            <li class="breadcrumb-item text-body active" aria-current="page">Golden Urban House For Sell</li>
+                            <li class="breadcrumb-item text-body active" aria-current="page">{{ $property->pro_name }}</li>
                         </ol>
                     </nav>
                 </div>
@@ -18,22 +21,22 @@
             </div>
         </div>
         <!-- Header End -->
-@include('layouts1.header-search') 
+@include('layoutsFront.header-search') 
         <!-- About Start -->
         <div class="container-xxl py-5">
             <div class="container">
                 <div class="row g-5 align-items-center">
                     <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                         <div class="about-img position-relative overflow-hidden p-5 pe-0">
-                            <img class="img-fluid w-100" src="{{ Vite::asset('resources/img/about.jpg')}}" alt="">
+                            <img class="img-fluid w-100" src="{{ asset($property->pro_img) }}" alt="">
                         </div>
                     </div>
                     <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
-                        <h1 class="mb-4">Golden Urban House For Sell</h1>
-                        <p class="mb-4">123 Street, New York, USA</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>1000 Sqft</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>3 Bed</p>
-                        <p><i class="fa fa-check text-primary me-3"></i>2 Bath</p>
+                        <h1 class="mb-4">{{ $property->pro_name }}</h1>
+                        <p class="mb-4">{{ $property->pro_address }}</p>
+                        <p><i class="fa fa-check text-primary me-3"></i>{{ $property->pro_area }} Sqft</p>
+                        <p><i class="fa fa-check text-primary me-3"></i>{{ $property->pro_bed }} Bed</p>
+                        <p><i class="fa fa-check text-primary me-3"></i>{{ $property->pro_bath }} Bath</p>
 
                     </div>
                 </div>
@@ -148,5 +151,4 @@
         </div>
         <!-- Team End -->
 
-        
-@include('layouts1.footer')
+@endsection

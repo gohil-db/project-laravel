@@ -1,4 +1,7 @@
-@include('layouts1.header')     
+@extends('layoutsFront.main')
+@section('title', 'Property Agent')
+
+@section('content')
         <!-- Header Start -->
         <div class="container-fluid header bg-white p-0">
             <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
@@ -18,7 +21,7 @@
             </div>
         </div>
         <!-- Header End -->
-@include('layouts1.header-search') 
+@include('layoutsFront.header-search') 
 
         <!-- Team Start -->
         <div class="container-xxl py-5">
@@ -120,4 +123,5 @@
         </div>
         <!-- Call to Action End -->
 
-@include('layouts1.footer')
+
+@endsection

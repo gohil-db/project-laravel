@@ -1,4 +1,7 @@
- @include('layouts1.header')     
+@extends('layoutsFront.main')
+@section('title', 'Properties List')
+
+@section('content')
 
         <!-- Header Start -->
         <div class="container-fluid header bg-white p-0">
@@ -20,7 +23,7 @@
         </div>
         <!-- Header End -->
 
-@include('layouts1.header-search')
+@include('layoutsFront.header-search')
  
  <!-- Property List Start -->
         <div class="container-xxl py-5">
@@ -439,4 +442,5 @@
             </div>
         </div>
         <!-- Call to Action End -->
-@include('layouts1.footer')
+
+@endsection

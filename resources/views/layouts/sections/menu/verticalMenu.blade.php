@@ -20,12 +20,12 @@ use Illuminate\Support\Facades\Route;
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-       <h2> gohil</h2>
+        @php
+        $verticalMenuJson = file_get_contents(base_path('resources/menu/verticalMenu.json'));
+        $verticalMenuData = json_decode($verticalMenuJson);
+        @endphp
     
-        
-        @if(!empty($menuData))
-        @foreach ($menuData[0]->menu as $menu)
-
+        @foreach ($verticalMenuData->menu as $menu)       
         {{-- adding active and open class if child is active --}}
 
         {{-- menu headers --}}
@@ -78,7 +78,7 @@ use Illuminate\Support\Facades\Route;
         </li>
         @endif
         @endforeach
-        @endif
+      
     </ul>
 
 </aside>

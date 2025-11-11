@@ -1,4 +1,7 @@
-@include('layouts1.header')     
+@extends('layoutsFront.main')
+@section('title', 'Contact US')
+
+@section('content')
 
         <!-- Header Start -->
         <div class="container-fluid header bg-white p-0">
@@ -19,7 +22,7 @@
             </div>
         </div>
         <!-- Header End -->
-@include('layouts1.header-search') 
+@include('layoutsFront.header-search') 
         <!-- Contact Start -->
         <div class="container-xxl py-5">
             <div class="container">
@@ -108,5 +111,6 @@
             </div>
         </div>
         <!-- Contact End -->
-@include('layouts1.footer')
+
+@endsection
 
