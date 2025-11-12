@@ -18,11 +18,31 @@ class Property extends Model
         'type_id',
         'latitude',
         'longitude',
+        'for_sell',
+        'for_rent',
+        'featured',
+        'catalog',
+        'description',
     ];
 
     public function type()
     {
         return $this->belongsTo(PropertyType::class, 'type_id');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(PropertyImage::class);
+    }
+
+    public function inquiries()
+    {
+        return $this->hasMany(Inquiry::class);
+    }
+
+    public function videos()
+    {
+        return $this->hasMany(PropertyVideo::class);
     }
     
 }

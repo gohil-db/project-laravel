@@ -10,13 +10,9 @@
                 <div class="col-md-6 animated fadeIn">
                     <div class="owl-carousel header-carousel">
                          @foreach($sliders as $slider)
-                        <div class="owl-carousel-item">
-                            <!-- <img class="img-fluid" src="{{ Vite::asset('resources/img/carousel-1.jpg') }}"  alt=""> -->
+                        <div class="owl-carousel-item">                        
                             <img class="img-fluid" src="{{ asset($slider->image ?? '') }}"  alt="">
-                        </div>
-                        <!-- <div class="owl-carousel-item">
-                            <img class="img-fluid" src="{{ Vite::asset('resources/img/carousel-2.jpg') }}"  alt="">
-                        </div> -->
+                        </div>                
                         @endforeach
                     </div>
                 </div>

@@ -5,6 +5,7 @@
 <!-- Page Scripts -->
 @section('page-script')
 @vite(['resources/assets/js/pages-account-settings-account.js'])
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
 
 @section('content')
@@ -42,12 +43,22 @@
     <form action="{{ route('properties.update', $property->id) }}" method="POST" enctype="multipart/form-data" class="mt-3">
         @csrf
         @method('PUT')
-  <div class="card-body">
+  <div class="card-body">        
+        <div class="mb-3">
+            <label>Property Type</label>
+            <select name="type_id" class="form-control" required>
+                <option value="">Select Type</option>
+                @foreach($types as $type)
+                    <option value="{{ $type->id }}" {{ $property->type_id == $type->id ? 'selected' : '' }}>
+                        {{ $type->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
         <div class="mb-3">
             <label>Property Name</label>
             <input type="text" name="pro_name" value="{{ old('pro_name', $property->pro_name) }}" class="form-control" required>
         </div>
-
         <div class="mb-3">
             <label>Address</label>
             <input type="text" name="pro_address" value="{{ old('pro_address', $property->pro_address) }}" class="form-control" required>
@@ -67,29 +78,108 @@
             <label>Bathrooms</label>
             <input type="number" name="pro_bath" value="{{ old('pro_bath', $property->pro_bath) }}" class="form-control">
         </div>
-
-        <div class="mb-3">
-            <label>Property Type</label>
-            <select name="type_id" class="form-control" required>
-                <option value="">Select Type</option>
-                @foreach($types as $type)
-                    <option value="{{ $type->id }}" {{ $property->type_id == $type->id ? 'selected' : '' }}>
-                        {{ $type->name }}
-                    </option>
-                @endforeach
-            </select>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" class="form-control" rows="4">{{ old('description', $property->description ?? '') }}</textarea>
         </div>
-         
-        <div class="mb-3">
-            <label>Property Image</label>
-            <input type="file" name="pro_img" class="form-control">
-
+        <div class="mb-3">           
             @if($property->pro_img && file_exists(public_path($property->pro_img)))
                 <div class="mt-2">
-                    <p>Current Image:</p>
+                    <p>Current Property Image:</p>
                     <img src="{{ asset($property->pro_img) }}" alt="Property Image" width="150" height="100" class="rounded shadow">
                 </div>
             @endif
+             <label>Change Property Image</label>
+            <input type="file" name="pro_img" class="form-control">
+        </div>  
+        <div class="mb-3">            
+              @if($property->catalog && file_exists(public_path($property->catalog)))
+                <div class="mt-2">                    
+                    <p>Current Catelog (PDF):</p>
+                    <a href="{{ asset($property->catalog) }}" target="_blank">{{ asset($property->catalog) }}</a>                    
+                </div>
+            @endif
+            <label for="catalog" class="form-label">Change Catalog (PDF)</label>
+            <input type="file" name="catalog" id="catalog" accept="application/pdf" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Tags</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="for_sell" id="for_sell" value="1" {{ old('for_sell', $property->for_sell ?? false) ? 'checked' : '' }}>
+                <label class="form-check-label" for="for_sell">For Sell</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="for_rent" id="for_rent" value="1" {{ old('for_rent', $property->for_rent ?? false) ? 'checked' : '' }}>
+                <label class="form-check-label" for="for_rent">For Rent</label>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="featured" id="featured" value="1" {{ old('featured', $property->featured ?? false) ? 'checked' : '' }}>
+                <label class="form-check-label" for="featured">Featured</label>
+            </div>
+        </div>
+      
+        <div class="mb-3">
+            @if($property->images->count())
+                <h5 class="mt-4">Existing Images</h5>
+                <div class="row" id="image-list">
+                    @foreach($property->images as $image)
+                 
+                <div id="image-{{ $image->id }}" class="col-md-3">
+                    <img src="{{ asset($image->image) }}" class="img-fluid my-2" alt="Property Image">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteImage({{ $image->id }})">Delete</button>
+                </div>
+                    @endforeach
+                </div>
+                
+            @endif
+        </div>
+          <div class="mb-3">
+            <label for="images" class="form-label">Add Gallery Images</label>
+            <input type="file" name="images[]" id="images" multiple accept="image/*" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            @if($property->videos->count())
+            <h5 class="mt-4">Existing Videos</h5>
+            <div class="row" id="video-list">
+                @foreach($property->videos as $video)
+                <div class="col-md-4 mb-3 text-center video-item" data-id="{{ $video->id }}">
+                    @if(Str::contains($video->video, 'youtube.com') || Str::contains($video->video, 'youtu.be'))
+                        <iframe width="100%" height="200" src="{{ $video->video }}" frameborder="0" allowfullscreen></iframe>
+                    @else
+                        <video width="100%" height="200" controls>
+                            <source src="{{ asset($video->video) }}" type="video/mp4">
+                        </video>
+                    @endif
+                    
+                    {{-- Delete button --}}
+                    <form action="{{ route('property.video.delete', $video->id) }}" method="POST" class="mt-2">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this video?')">
+                            Delete
+                        </button>
+                    </form>
+
+                    <!-- <button type="button"
+                        class="btn btn-sm btn-danger mt-2 delete-video"
+                        data-id="{{ $video->id }}">
+                        Delete
+                    </button> -->
+                </div>
+                @endforeach
+            </div>
+        @endif
+        </div>
+        <div class="mb-3">
+            <label for="videos" class="form-label">Add New Property Videos</label>
+            <input type="file" name="videos[]" id="videos" class="form-control" multiple accept="video/*">
+        </div>
+        <div class="mb-3">
+            <label for="video_links" class="form-label">Add YouTube Video Links (comma-separated)</label>
+            <input type="text" name="video_links" id="video_links" class="form-control" placeholder="https://youtube.com/..., https://youtu.be/...">
         </div>
          {{-- Latitude --}}
         <div class="mb-3">
@@ -208,5 +298,44 @@
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADIspkSf3W_n0nCMWTN80TWTvkKb6y3LE&callback=initMap">
 </script>
+
+<script>
+function deleteImage(imageId) {
+    if (confirm('Are you sure you want to delete this image?')) {
+        fetch(`/delete-image/${imageId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(async response => {
+            // Safely handle both JSON and non-JSON responses
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                console.error('Invalid JSON:', e);
+                alert('Unexpected response from server.');
+                return;
+            }
+
+            if (response.ok && data.success) {
+                alert(data.message);
+                const imgDiv = document.getElementById('image-' + imageId);
+                if (imgDiv) imgDiv.remove();
+            } else {
+                alert(data.message || 'Error deleting image.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Error deleting image.');
+        });
+    }
+}
+</script>
+
+
 
 @endsection

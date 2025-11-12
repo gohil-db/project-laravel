@@ -103,6 +103,12 @@
       "icon": "menu-icon icon-base bx bx-collection",
       "slug": "admin-header-slider-add",
       "url": "admin/header-slider"
+    },
+    {
+      "name": "User Inquiry",
+      "icon": "menu-icon icon-base bx bx-collection",
+      "slug": "admin.property.inquiriesList",
+      "url": "admin/inquiriesList"
     }
     
   ]

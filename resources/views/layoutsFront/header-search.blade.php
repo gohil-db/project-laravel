@@ -18,7 +18,7 @@
                                 </select>
                             </div>
                             <div class="col-md-4 position-relative">
-                                 <input type="text" name="location" id="location" class="form-control border-0 py-3"  placeholder="Location" >
+                                 <input type="text" name="location" id="location" class="form-control border-0 py-3"  placeholder="Location" autocomplete="off">
                                  <span id="loader" 
                                     style="
                                         position:absolute;

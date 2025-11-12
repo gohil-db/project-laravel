@@ -6,6 +6,13 @@ use App\Models\Property;
 use App\Models\PropertyType;
 use Illuminate\Http\Request;
 use App\Models\Setting;
+use App\Models\PropertyImage;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use App\Models\Inquiry;
+use App\Models\PropertyVideo;
+use App\Models\PropertyAgent;
+use Illuminate\Support\Facades\File;
 
 class PropertyController extends Controller
 {
@@ -49,10 +56,14 @@ class PropertyController extends Controller
             'pro_img' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'for_sell' => 'nullable|boolean',
+            'for_rent' => 'nullable|boolean',
+            'featured' => 'nullable|boolean',
+           
         ]);
 
         $data = $request->only([
-            'pro_name', 'pro_address', 'pro_area', 'pro_bed', 'pro_bath', 'type_id','latitude', 'longitude'
+            'pro_name', 'pro_address', 'pro_area', 'pro_bed', 'pro_bath', 'type_id','latitude', 'longitude','description'
         ]);
 
         if ($request->hasFile('pro_img')) {
@@ -61,10 +72,51 @@ class PropertyController extends Controller
             $file->move(public_path('uploads/properties'), $filename);
             $data['pro_img'] = 'uploads/properties/' . $filename;
         }
+        // Convert checkboxes (unchecked = 0)
+        $data['for_sell'] = $request->has('for_sell');
+        $data['for_rent'] = $request->has('for_rent');
+        $data['featured'] = $request->has('featured');
 
-        Property::create($data);
+        if ($request->hasFile('catalog')) {
+            $file = $request->file('catalog');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/catalog'), $filename);
+            $data['catalog'] = 'uploads/catalog/' . $filename;         
+        }
 
-        return redirect()->route('properties.index')->with('success', 'Property added successfully.');
+         $property = Property::create($data);
+
+       // Handle multiple images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imageFile) {                
+                $filename = time() . '_' . Str::random(8) . '.' . $imageFile->getClientOriginalExtension();             
+                $imageFile->move(public_path('uploads/property_images'), $filename);       
+                $property->images()->create([
+                    'image' => 'uploads/property_images/' . $filename
+                ]);
+            }
+        }
+
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $videoFile) {
+                $filename = time() . '_' . Str::random(6) . '.' . $videoFile->getClientOriginalExtension();
+                $videoFile->move(public_path('uploads/property_videos'), $filename);
+
+                $property->videos()->create([
+                    'video' => 'uploads/property_videos/' . $filename
+                ]);
+            }
+        }
+
+        // OR for YouTube links:
+        if ($request->filled('video_links')) {
+            $links = explode(',', $request->video_links);
+            foreach ($links as $link) {
+                $property->videos()->create(['video' => trim($link)]);
+            }
+        }
+
+        return redirect()->route('admin-property-list')->with('success', 'Property added successfully.');
  
     }
 
@@ -76,10 +128,12 @@ class PropertyController extends Controller
      */
     public function show($id)
     {
-        $setting = Setting::first();
+        
         $types = PropertyType::all();
         $property = Property::with('type')->findOrFail($id);
-        return view('details', compact('property','types','setting'));
+        $properties = Property::with('type')->get(); 
+        $propertyAgents = PropertyAgent::all();        
+        return view('details', compact('properties','property','types','propertyAgents'));
       
     }
 
@@ -114,11 +168,18 @@ class PropertyController extends Controller
             'pro_img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'for_sell' => 'nullable|boolean',
+            'for_rent' => 'nullable|boolean',
+            'featured' => 'nullable|boolean',
         ]);
 
         $data = $request->only([
-            'pro_name', 'pro_address', 'pro_area', 'pro_bed', 'pro_bath', 'type_id','latitude', 'longitude'
+            'pro_name', 'pro_address', 'pro_area', 'pro_bed', 'pro_bath', 'type_id','latitude', 'longitude','description'
         ]);
+         // Convert checkboxes (unchecked = 0)
+        $data['for_sell'] = $request->has('for_sell');
+        $data['for_rent'] = $request->has('for_rent');
+        $data['featured'] = $request->has('featured');
 
         if ($request->hasFile('pro_img')) {
             if ($property->pro_img && file_exists(public_path($property->pro_img))) {
@@ -129,8 +190,44 @@ class PropertyController extends Controller
             $file->move(public_path('uploads/properties'), $filename);
             $data['pro_img'] = 'uploads/properties/' . $filename;
         }
+         if ($request->hasFile('catalog')) {
+            $file = $request->file('catalog');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/catalog'), $filename);
+            $data['catalog'] = 'uploads/catalog/' . $filename;         
+        }
+       
+        // Handle multiple images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $imageFile) {                
+                $filename = time() . '_' . Str::random(8) . '.' . $imageFile->getClientOriginalExtension();             
+                $imageFile->move(public_path('uploads/property_images'), $filename);       
+                $property->images()->create([
+                    'image' => 'uploads/property_images/' . $filename
+                ]);
+            }
+        }
 
-        $property->update($data);
+        if ($request->hasFile('videos')) {
+            foreach ($request->file('videos') as $videoFile) {
+                $filename = time() . '_' . Str::random(6) . '.' . $videoFile->getClientOriginalExtension();
+                $videoFile->move(public_path('uploads/property_videos'), $filename);
+
+                $property->videos()->create([
+                    'video' => 'uploads/property_videos/' . $filename
+                ]);
+            }
+        }        
+
+        // OR for YouTube links:
+        if ($request->filled('video_links')) {
+            $links = explode(',', $request->video_links);
+            foreach ($links as $link) {
+                $property->videos()->create(['video' => trim($link)]);
+            }
+        }
+
+         $property->update($data);
 
         // return redirect()->route('properties.index')->with('success', 'Property updated successfully.');
         return redirect()->route('admin-property-list')->with('success', 'Property updated successfully.');
@@ -147,6 +244,16 @@ class PropertyController extends Controller
          if ($property->pro_img && file_exists(public_path($property->pro_img))) {
             unlink(public_path($property->pro_img));
         }
+        // Delete catalog
+        if ($property->catalog && file_exists(public_path($property->catalog))) {
+            unlink(public_path($property->catalog));
+        }
+        // Delete images
+        foreach ($property->images as $img) {
+            Storage::disk('public')->delete($img->image);
+            $img->delete();
+        }
+      
 
         $property->delete();
         return redirect()->route('admin-property-list')->with('success', 'Property deleted successfully.');
@@ -189,4 +296,106 @@ class PropertyController extends Controller
         return view('search-result', compact('properties','searchProperties','types','setting'));
     }
 
+    public function storeInquiry(Request $request, $propertyId)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'number' => 'required|string|max:15',
+            'city' => 'nullable|string|max:255',
+        ]);
+
+        Inquiry::create([
+            'property_id' => $propertyId,
+            'name' => $request->name,
+            'number' => $request->number,
+            'city' => $request->city,
+        ]);
+
+        return redirect()->back()->with('success', 'Your inquiry has been submitted successfully!');
+    }
+
+    // public function deleteVideo($id, Request $request)
+    // {
+    //     $video = PropertyVideo::findOrFail($id);
+
+    //     if ($video->video && File::exists(public_path($video->video))) {
+    //         File::delete(public_path($video->video));
+    //     }
+
+    //     $video->delete();
+
+    //     if ($request->ajax()) {
+    //         return response()->json(['success' => true]);
+    //     }
+
+    //     return back()->with('success', 'Video deleted successfully.');
+    // }
+
+    public function deleteVideo($id)
+    {
+        $video = PropertyVideo::findOrFail($id);
+
+        // Delete video file if it exists and is not a YouTube link
+        if ($video->video && File::exists(public_path($video->video))) {
+            File::delete(public_path($video->video));
+        }
+
+        $video->delete();
+
+        return redirect()->back()->with('success', 'Video deleted successfully.');
+    }
+
+    public function deleteImage22($id)
+    {
+        try {
+        $image = PropertyImage::findOrFail($id);
+
+        // Delete the file if it exists
+        if (file_exists(public_path($image->image))) {
+            unlink(public_path($image->image));
+        }
+
+        // Delete from database
+        $image->delete();
+
+        return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Error deleting image', 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function deleteImage($id)
+    {
+        try {
+            $image = PropertyImage::findOrFail($id);
+
+            if (file_exists(public_path($image->image))) {
+                unlink(public_path($image->image));
+            }
+
+            $image->delete();
+
+            return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting image',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function inquiriesList()
+    {
+        // $inquiries = Inquiry::with('property');
+        $inquiries = Inquiry::all();
+       
+        return view('content.admin.inquiries.index', compact('inquiries'));
+    }
+
+    public function destroyInquiry(Inquiry $inquiry)
+    {
+        $inquiry->delete();
+        return redirect()->back()->with('success', 'Inquiry deleted successfully.');
+    }
 }

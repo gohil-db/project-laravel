@@ -20,15 +20,15 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/property/property-list', [HomeController::class, 'propertyList'])->name('propertyList');
 Route::get('/property/property-type', [HomeController::class, 'propertyType'])->name('propertyType');
 Route::get('/property/property-agent', [HomeController::class, 'propertyAgent'])->name('propertyAgent');
-
+Route::get('/property/{id}', [PropertyController::class, 'show'])->name('propertiesList.show');
+Route::post('/property/{property}/inquiry', [PropertyController::class, 'storeInquiry'])->name('property.inquiry');
 
 //Search 
 Route::get('/search', [PropertyController::class, 'search'])->name('property.search');
 
 
-// Backend Admin Routes
 
-// Admin routes
+// Backend Admin Routes
 Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
 Route::get('/admin/register', [AdminAuthController::class, 'showRegisterForm'])->name('admin.register');
@@ -38,14 +38,12 @@ Route::get('/admin/forgot-password', [AdminAuthController::class, 'forgotPasswor
 Route::post('/admin/forgot-password', [AdminAuthController::class, 'sendResetLink'])->name('admin.sendResetLink');
 
 
-// Admin protected routes
+//Backend Admin protected routes
 Route::middleware(['admin'])->group(function () {
-
 Route::get('/admin', [Analytics::class, 'index'])->name('dashboard-analytics');
 Route::get('/admin/website-settings', [SettingController::class, 'index'])->name('admin-website-settings-logo');
 Route::post('website-settings', [SettingController::class, 'update'])->name('website-settings');
-// Route::post('/admin/website-settings/update', [SettingController::class, 'update'])->name('admin-website-settings-logo');
-// Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
 
 // Property Types
 Route::get('/admin/property-types-list', [PropertyTypeController::class, 'index'])->name('admin-properties-types-list');
@@ -62,8 +60,9 @@ Route::resource('header-slider', HeaderSliderController::class);
 Route::get('/admin/property-list', [PropertyController::class, 'index'])->name('admin-property-list');
 Route::get('/admin/property-create', [PropertyController::class, 'create'])->name('admin-property-create');
 // Route::resource('/admin/property', PropertyTypeController::class);
-Route::get('/property/{id}', [PropertyController::class, 'show'])->name('properties.show');
 Route::resource('properties', PropertyController::class);
+Route::delete('/property-video/{id}', [PropertyController::class, 'deleteVideo'])->name('property.video.delete');
+Route::delete('/delete-image/{id}', [PropertyController::class, 'deleteImage'])->name('property.image.delete');
 
 
 // Testimonials
@@ -76,6 +75,10 @@ Route::resource('testimonials', TestimonialController::class);
 Route::get('/admin/property-agents-list', [PropertyAgentController::class, 'index'])->name('admin-agents-list');
 Route::get('/admin/property-agents-create', [PropertyAgentController::class, 'create'])->name('admin-agents-create');
 Route::resource('property-agents', PropertyAgentController::class);
+
+ Route::get('/admin/inquiriesList', [PropertyController::class, 'inquiriesList'])->name('admin.property.inquiriesList');
+Route::delete('/admin/inquiries/{inquiry}', [PropertyController::class, 'destroyInquiry'])->name('inquiries.destroy');
+//  Route::post('/property/{property}/inquiry', [PropertyController::class, 'storeInquiry'])->name('property.inquiry');
 
 });
 
@@ -115,18 +118,7 @@ Route::resource('property-agents', PropertyAgentController::class);
 // Route::get('/ui/carousel', [Carousel::class, 'index'])->name('ui-carousel');
 // Route::get('/ui/collapse', [Collapse::class, 'index'])->name('ui-collapse');
 // Route::get('/ui/dropdowns', [Dropdowns::class, 'index'])->name('ui-dropdowns');
-// Route::get('/ui/footer', [Footer::class, 'index'])->name('ui-footer');
-// Route::get('/ui/list-groups', [ListGroups::class, 'index'])->name('ui-list-groups');
-// Route::get('/ui/modals', [Modals::class, 'index'])->name('ui-modals');
-// Route::get('/ui/navbar', [Navbar::class, 'index'])->name('ui-navbar');
-// Route::get('/ui/offcanvas', [Offcanvas::class, 'index'])->name('ui-offcanvas');
-// Route::get('/ui/pagination-breadcrumbs', [PaginationBreadcrumbs::class, 'index'])->name('ui-pagination-breadcrumbs');
-// Route::get('/ui/progress', [Progress::class, 'index'])->name('ui-progress');
-// Route::get('/ui/spinners', [Spinners::class, 'index'])->name('ui-spinners');
-// Route::get('/ui/tabs-pills', [TabsPills::class, 'index'])->name('ui-tabs-pills');
-// Route::get('/ui/toasts', [Toasts::class, 'index'])->name('ui-toasts');
-// Route::get('/ui/tooltips-popovers', [TooltipsPopovers::class, 'index'])->name('ui-tooltips-popovers');
-// Route::get('/ui/typography', [Typography::class, 'index'])->name('ui-typography');
+
 
 // // extended ui
 // Route::get('/extended/ui-perfect-scrollbar', [PerfectScrollbar::class, 'index'])->name('extended-ui-perfect-scrollbar');

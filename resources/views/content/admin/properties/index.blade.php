@@ -48,12 +48,12 @@
             <tr>
                 <th>#</th>
                 <th>Image</th>
+                <th>Type</th>
                 <th>Property Name</th>
                 <th>Address</th>
                 <th>Area (sqft)</th>
                 <th>Bed</th>
                 <th>Bath</th>
-                <th>Type</th>
                 <th>Actions</th>
             </tr>
         </thead>

@@ -52,7 +52,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- WOW.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
-   
+   <!-- Magnific Popup CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
+
+<!-- Magnific Popup JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+
 </body>
 
 </html>    

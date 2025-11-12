@@ -87,13 +87,25 @@
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">
-                                        <a href=""><img class="img-fluid" src="{{ Vite::asset('resources/img/property-1.jpg')}}"  alt=""></a>
-                                        <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">For Sell</div>
+                                        <a href="{{ route('propertiesList.show', $property->id) }}"><img class="img-fluid" src="{{ Vite::asset('resources/img/property-1.jpg')}}"  alt=""></a>
+                                        <div class="bg-primary rounded text-white position-absolute start-0 top-0 m-4 py-1 px-3">
+                                             @if($property->for_sell)
+                                               For Sale
+                                            @endif
+                                            @if($property->for_rent)
+                                                For Rent
+                                            @endif
+                                            @if($property->featured)
+                                               Featured
+                                            @endif
+
+                                        </div>
                                         <div class="bg-white rounded-top text-primary position-absolute start-0 bottom-0 mx-4 pt-1 px-3">{{$property->type->name}}</div>
                                     </div>
                                     <div class="p-4 pb-0">
                                         <!-- <h5 class="text-primary mb-3">$12,345</h5> -->
-                                        <a class="d-block h5 mb-2" href="{{ route('properties.show', $property->id) }}">{{$property->pro_name}}</a>
+                                        <a class="d-block h5 mb-2" href="{{ route('propertiesList.show', $property->id) }}">{{$property->pro_name}}</a>
+                                      
                                         <p><i class="fa fa-map-marker-alt text-primary me-2"></i>{{$property->pro_address}}</p>
                                     </div>
                                     <div class="d-flex border-top">

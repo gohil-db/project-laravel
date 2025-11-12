@@ -24,16 +24,15 @@
             </ul>
         </div>
         <div class="card mb-6">
-
-    @if (session('success'))
-        <div class="alert alert-success" id="alert-message">
-            {{ session('success') }}
-        </div>
-        <script>
-            setTimeout(() => document.getElementById('alert-message')?.remove(), 3000);
-        </script>
-    @endif
-<div class="card-body">
+        @if (session('success'))
+            <div class="alert alert-success" id="alert-message">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => document.getElementById('alert-message')?.remove(), 3000);
+            </script>
+        @endif
+    <div class="card-body">
     <table class="table table-bordered table-striped align-middle">
         <thead class="table-primary">
             <tr>
@@ -74,8 +73,8 @@
         </tbody>
     </table>
 
-</div>
-</div>
+    </div>
+    </div>
 </div>
 </div>
 @endsection

@@ -58,17 +58,55 @@
         <div class="mb-3">
             <label>Bathrooms</label>
             <input type="number" name="pro_bath" class="form-control">
-        </div>       
-
+        </div>     
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" class="form-control" rows="4"></textarea>
+        </div>  
         <div class="mb-3">
             <label>Property Image</label>
             <input type="file" name="pro_img" class="form-control">
         </div>
         <div class="mb-3">
+        <label class="form-label">Tags</label>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="for_sell" id="for_sell" value="1" {{ old('for_sell', $property->for_sell ?? false) ? 'checked' : '' }}>
+            <label class="form-check-label" for="for_sell">For Sell</label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="for_rent" id="for_rent" value="1" {{ old('for_rent', $property->for_rent ?? false) ? 'checked' : '' }}>
+            <label class="form-check-label" for="for_rent">For Rent</label>
+        </div>
+
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="featured" id="featured" value="1" {{ old('featured', $property->featured ?? false) ? 'checked' : '' }}>
+            <label class="form-check-label" for="featured">Featured</label>
+        </div>
+        </div>
+        <div class="mb-3">
+            <label for="catalog" class="form-label">Property Catalog (PDF)</label>
+            <input type="file" name="catalog" id="catalog" accept="application/pdf" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="images" class="form-label">Gallery Images</label>
+            <input type="file" name="images[]" id="images" multiple accept="image/*" class="form-control">
+        </div>
+
+        <div class="mb-3">
+            <label for="videos" class="form-label">Property Videos</label>
+            <input type="file" name="videos[]" id="videos" class="form-control" multiple accept="video/*">
+        </div>
+        <div class="mb-3">
+            <label for="video_links" class="form-label">YouTube Video Links (comma-separated)</label>
+            <input type="text" name="video_links" id="video_links" class="form-control" placeholder="https://youtube.com/..., https://youtu.be/...">
+        </div>
+
+        <div class="mb-3">
             <label for="latitude" class="form-label">Latitude</label>
             <input type="text" name="latitude" id="latitude" class="form-control" readonly placeholder="select on map" >
         </div>
-
         <div class="mb-3">
             <label for="longitude" class="form-label">Longitude</label>
             <input type="text" name="longitude" id="longitude" class="form-control" readonly placeholder="select on map" >

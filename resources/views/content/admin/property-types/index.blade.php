@@ -24,9 +24,14 @@
             </ul>
         </div>
         <div class="card mb-6">
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+        @if (session('success'))
+            <div class="alert alert-success" id="alert-message">
+                {{ session('success') }}
+            </div>
+            <script>
+                setTimeout(() => document.getElementById('alert-message')?.remove(), 3000);
+            </script>
+        @endif
 
     <div class="card">
     <!-- <h5 class="card-header">Property Types</h5> -->
