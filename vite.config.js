@@ -4,7 +4,7 @@ import html from '@rollup/plugin-html';
 import { glob } from 'glob';
 import path from 'path';
 import iconsPlugin from './vite.icons.plugin.mjs';
-
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 
 function GetFilesArray(query) {
@@ -31,13 +31,13 @@ const CoreScssFiles = GetFilesArray('resources/assets/vendor/scss/**/!(_)*.scss'
 const FontsScssFiles = GetFilesArray('resources/assets/vendor/fonts/!(_)*.scss');
 const FontsJsFiles = GetFilesArray('resources/assets/vendor/fonts/**/!(_)*.js');
 const FontsCssFiles = GetFilesArray('resources/assets/vendor/fonts/**/!(_)*.css');
-
+const libAnimateCssFiles = GetFilesArray('resources/lib/animate/*.css');
 export default defineConfig({
     plugins: [
         laravel({
             input: [
                 'resources/css/app.css', 
-                'resources/js/app.js',
+                'resources/js/app.js',              
                 ...pageJsFiles,
                 ...vendorJsFiles,
                 ...LibsJsFiles,
@@ -50,6 +50,7 @@ export default defineConfig({
                 ],
             refresh: true,
         }),
+        cssInjectedByJsPlugin(),
          html(),
         iconsPlugin(),
     ],

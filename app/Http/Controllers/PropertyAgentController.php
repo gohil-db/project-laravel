@@ -35,8 +35,7 @@ class PropertyAgentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        // dd($request);
+    {     
         $request->validate([
             'fullname' => 'required|string|max:255',
             'designation' => 'nullable|string|max:255',
@@ -79,6 +78,7 @@ class PropertyAgentController extends Controller
      */
     public function edit(PropertyAgent $propertyAgent)
     {
+        dd($propertyAgent);
         return view('content.admin.agents.edit', compact('propertyAgent'));
     }
 
@@ -129,5 +129,14 @@ class PropertyAgentController extends Controller
 
         $propertyAgent->delete();
         return redirect()->back()->with('success', 'Agent deleted successfully.');
+    }
+
+    public function propertyAgentList()
+    {
+        $setting = Setting::first();
+        $types = PropertyType::withCount('properties')->get();
+        $properties = Property::all();
+        $propertyAgents = PropertyAgent::all();
+        return view('property-agent',compact('types','properties','propertyAgents')); // resources/views/contact.blade.php
     }
 }

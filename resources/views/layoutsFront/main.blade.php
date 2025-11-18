@@ -10,8 +10,9 @@
     
     <!-- Favicon -->
     <link href="{{ Vite::asset('resources/img/favicon.ico') }}" rel="icon">
-    <link rel="preload" as="style" href="{{ Vite::asset('resources/css/app.css') }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    @vite(['resources/css/app.css'])
+    <link rel="preload" href="{{ Vite::asset('resources/css/app.css') }}" as="style">
 
 <!-- Load Vite CSS & JS -->
    
@@ -25,9 +26,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
 
-     
+     <style>
+    body { visibility: hidden; }
+    body.loaded { visibility: visible; }
+</style>
 </head>
 <body>
+  @vite(['resources/js/app.js'])
     <div class="container-xxl bg-white p-0">
         <!-- Spinner Start -->
         <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -46,6 +51,7 @@
         @include('layoutsFront.footer')
         <!-- Footer End -->
 </div>  
+   
   <!-- JavaScript Libraries -->
     <!-- <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script> -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -57,6 +63,11 @@
 
 <!-- Magnific Popup JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+<script>
+    window.addEventListener("load", function () {
+    document.body.classList.add("loaded");
+});
+</script>
 
 </body>
 

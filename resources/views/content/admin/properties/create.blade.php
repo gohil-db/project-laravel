@@ -8,6 +8,11 @@
 @endsection
 
 @section('content')
+<style>
+.ck-editor__editable_inline {
+    min-height: 300px; /* adjust as you like */
+}
+</style>
 <div class="row">
     <div class="col-md-12">
         <div class="nav-align-top">
@@ -22,109 +27,126 @@
             </ul>
         </div>
         <div class="card mb-6">
+            <form action="{{ route('properties.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+            <div class="card-body">
+                <div class="mb-3">
+                    <label>Property Type</label>
+                    <select name="type_id" class="form-control" required>
+                        <option value="">Select Type</option>
+                        @foreach($types as $type)
+                            <option value="{{ $type->id }}">{{ $type->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Property Builder</label>
+                    <select name="builder_id" class="form-control" required>
+                        <option value="">Select Builder Name</option>
+                        @foreach($builders as $builder)
+                            <option value="{{ $builder->id }}">{{ $builder->fullname }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Display on Top Slider?</label>
+                    <select name="display_top" class="form-control">
+                        <option value="0" >No</option>
+                        <option value="1" >Yes</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Property Name</label>
+                    <input type="text" name="pro_name" class="form-control" required>
+                </div>
 
-    <form action="{{ route('properties.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
-       <div class="card-body">
-         <div class="mb-3">
-            <label>Property Type</label>
-            <select name="type_id" class="form-control" required>
-                <option value="">Select Type</option>
-                @foreach($types as $type)
-                    <option value="{{ $type->id }}">{{ $type->name }}</option>
-                @endforeach
-            </select>
-        </div>
-        <div class="mb-3">
-            <label>Property Name</label>
-            <input type="text" name="pro_name" class="form-control" required>
-        </div>
+                <div class="mb-3">
+                    <label>Address</label>
+                    <input type="text" name="pro_address" class="form-control" required>
+                </div>
 
-        <div class="mb-3">
-            <label>Address</label>
-            <input type="text" name="pro_address" class="form-control" required>
-        </div>
+                <div class="mb-3">
+                    <label>Area (sqft)</label>
+                    <input type="text" name="pro_area" class="form-control">
+                </div>
 
-        <div class="mb-3">
-            <label>Area (sqft)</label>
-            <input type="text" name="pro_area" class="form-control">
-        </div>
+                <div class="mb-3">
+                    <label>Bedrooms</label>
+                    <input type="number" name="pro_bed" class="form-control">
+                </div>
 
-        <div class="mb-3">
-            <label>Bedrooms</label>
-            <input type="number" name="pro_bed" class="form-control">
-        </div>
+                <div class="mb-3">
+                    <label>Bathrooms</label>
+                    <input type="number" name="pro_bath" class="form-control">
+                </div>     
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" id="description" class="form-control" rows="10"></textarea>
+                </div>  
+                <div class="mb-3">
+                    <label>Property Image</label>
+                    <input type="file" name="pro_img" class="form-control">
+                </div>
+                <div class="mb-3">
+                <label class="form-label">Tags</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="for_sell" id="for_sell" value="1" {{ old('for_sell', $property->for_sell ?? false) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="for_sell">For Sell</label>
+                </div>
 
-        <div class="mb-3">
-            <label>Bathrooms</label>
-            <input type="number" name="pro_bath" class="form-control">
-        </div>     
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea name="description" id="description" class="form-control" rows="4"></textarea>
-        </div>  
-        <div class="mb-3">
-            <label>Property Image</label>
-            <input type="file" name="pro_img" class="form-control">
-        </div>
-        <div class="mb-3">
-        <label class="form-label">Tags</label>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="for_sell" id="for_sell" value="1" {{ old('for_sell', $property->for_sell ?? false) ? 'checked' : '' }}>
-            <label class="form-check-label" for="for_sell">For Sell</label>
-        </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="for_rent" id="for_rent" value="1" {{ old('for_rent', $property->for_rent ?? false) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="for_rent">For Rent</label>
+                </div>
 
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="for_rent" id="for_rent" value="1" {{ old('for_rent', $property->for_rent ?? false) ? 'checked' : '' }}>
-            <label class="form-check-label" for="for_rent">For Rent</label>
-        </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="featured" id="featured" value="1" {{ old('featured', $property->featured ?? false) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="featured">Featured</label>
+                </div>
+                </div>
+                <div class="mb-3">
+                    <label for="catalog" class="form-label">Property Catalog (PDF)</label>
+                    <input type="file" name="catalog" id="catalog" accept="application/pdf" class="form-control">
+                </div>
 
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="featured" id="featured" value="1" {{ old('featured', $property->featured ?? false) ? 'checked' : '' }}>
-            <label class="form-check-label" for="featured">Featured</label>
-        </div>
-        </div>
-        <div class="mb-3">
-            <label for="catalog" class="form-label">Property Catalog (PDF)</label>
-            <input type="file" name="catalog" id="catalog" accept="application/pdf" class="form-control">
-        </div>
+                <div class="mb-3">
+                    <label for="images" class="form-label">Gallery Images</label>
+                    <input type="file" name="images[]" id="images" multiple accept="image/*" class="form-control">
+                </div>
 
-        <div class="mb-3">
-            <label for="images" class="form-label">Gallery Images</label>
-            <input type="file" name="images[]" id="images" multiple accept="image/*" class="form-control">
-        </div>
+                <div class="mb-3">
+                    <label for="videos" class="form-label">Property Videos</label>
+                    <input type="file" name="videos[]" id="videos" class="form-control" multiple accept="video/*">
+                </div>
+                <div class="mb-3">
+                    <label for="video_links" class="form-label">YouTube Video Links (comma-separated)</label>
+                    <input type="text" name="video_links" id="video_links" class="form-control" placeholder="https://youtube.com/..., https://youtu.be/...">
+                </div>
 
-        <div class="mb-3">
-            <label for="videos" class="form-label">Property Videos</label>
-            <input type="file" name="videos[]" id="videos" class="form-control" multiple accept="video/*">
-        </div>
-        <div class="mb-3">
-            <label for="video_links" class="form-label">YouTube Video Links (comma-separated)</label>
-            <input type="text" name="video_links" id="video_links" class="form-control" placeholder="https://youtube.com/..., https://youtu.be/...">
-        </div>
+                <div class="mb-3">
+                    <label for="latitude" class="form-label">Latitude</label>
+                    <input type="text" name="latitude" id="latitude" class="form-control" readonly placeholder="select on map" >
+                </div>
+                <div class="mb-3">
+                    <label for="longitude" class="form-label">Longitude</label>
+                    <input type="text" name="longitude" id="longitude" class="form-control" readonly placeholder="select on map" >
+                </div>
+                {{-- Google Map Picker --}}
+                <div class="mb-3">
+                    <label class="form-label">Select Location on Map</label>
+                    <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
+                </div>                
 
-        <div class="mb-3">
-            <label for="latitude" class="form-label">Latitude</label>
-            <input type="text" name="latitude" id="latitude" class="form-control" readonly placeholder="select on map" >
+                <button class="btn btn-success">Save</button>
+                <a href="{{ route('properties.index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+            </form>
         </div>
-        <div class="mb-3">
-            <label for="longitude" class="form-label">Longitude</label>
-            <input type="text" name="longitude" id="longitude" class="form-control" readonly placeholder="select on map" >
-        </div>
-        {{-- Google Map Picker --}}
-        <div class="mb-3">
-            <label class="form-label">Select Location on Map</label>
-            <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
-        </div>
-        <button class="btn btn-success">Save</button>
-        <a href="{{ route('properties.index') }}" class="btn btn-secondary">Cancel</a>
     </div>
-    </form>
 </div>
-</div>
-</div>
-{{-- Google Maps API --}}
 
+
+{{-- Google Maps API --}}
 <script>
     let map;
     let marker;
@@ -196,5 +218,32 @@
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADIspkSf3W_n0nCMWTN80TWTvkKb6y3LE&callback=initMap">
 </script>
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#description'), {
+        toolbar: {
+            items: [
+                'heading', '|',
+        'bold', 'italic', '|',
+        'link', 'blockQuote', 'bulletedList', 'numberedList', '|',
+        'undo', 'redo'
+            ]
+        },
+        fontColor: {
+            colors: [
+                { color: 'hsl(0, 0%, 0%)', label: 'Black' },
+                { color: 'hsl(0, 75%, 60%)', label: 'Red' },
+                { color: 'hsl(30, 75%, 60%)', label: 'Orange' },
+                { color: 'hsl(120, 75%, 60%)', label: 'Green' },
+                { color: 'hsl(240, 75%, 60%)', label: 'Blue' }
+            ]
+        }
+    })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
+
 
 @endsection

@@ -66,20 +66,20 @@
 
                     </div>
                     <div class="col-md-12">
-                    <h3>More Details:</h3>
-                    <p>
-                        {{ $property->description }}
-                    </p>
+                        <h3>More about <span class="text-primary">{{ $property->pro_name }}</span></h3>
+                        <div>                   
+                            {!! $property->description !!}
+                        </div>
                     </div>
-                </div>
+                   
             </div>
         </div>
         <!-- End -->
-        <!-- More Details Section Start -->
+        <!-- Video Section Start -->
         <div class="container-xxl py-5">
             <div class="container">    
                 <div class="row g-3">
-                    @if($property->images->count())
+                    @if($property->videos->count())
                   <h3 class="mb-3">Property Videos</h3>    
                     @foreach($property->videos as $video)
                         @php
@@ -115,7 +115,28 @@
                 </div>
             </div>
         </div>
-          
+        <!-- Video Section End -->  
+           <!--  Builder details here -->
+        <div class="container-xxl py-5">
+            <div class="container">
+             <div class="col-md-12">
+                         <h3>About <span class="text-primary">{{ $property->builder->fullname }}</span></h3>
+                        <div class="row">
+                            <div class="col-2">
+                            <img class="img-fluid rounded" src="{{ asset($property->builder->image) }}" alt="">
+                            </div>
+                            <div class="col">
+                                <a href="{{ route('builders.show', $property->builder_id) }}">{{ $property->builder->business_name }}</a>                    
+                            </div>                    
+                            <div>           
+                                {!! $property->builder->description !!}
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         <div class="container-xxl py-5">
             <div class="container">
                 <div class="bg-light rounded p-3">
@@ -167,22 +188,24 @@
                 </div>
             </div>
         </div>
-      <!-- More Details Section End -->   
-
-
-   <!-- Team Start -->
+      
+         <!-- Builder Start -->
         <div class="container-xxl py-5">
             <div class="container">
                 <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h1 class="mb-3">Property Agents</h1>
+                    <h1 class="mb-3">Property Builders</h1>
                     <p>Eirmod sed ipsum dolor sit rebum labore magna erat. Tempor ut dolore lorem kasd vero ipsum sit eirmod sit. Ipsum diam justo sed rebum vero dolor duo.</p>
                 </div>
                 <div class="row g-4">
-                    @foreach($propertyAgents as $agent)
+                    @foreach($propertyBuilders as $agent)
                     <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
                         <div class="team-item rounded overflow-hidden">
                             <div class="position-relative">
-                                <img class="img-fluid" src="{{ asset($agent->image) }}"  alt="">
+                                <div class="text-center" style="height:300px; width:300px;">
+                                <a href="{{ route('builders.show', $agent->id) }}">
+                                    <img class="img-fluid" src="{{ asset($agent->image) }}"   alt="">
+                                </a> 
+                                </div>
                                 <div class="position-absolute start-50 top-100 translate-middle d-flex align-items-center">
                                     <a class="btn btn-square mx-1" href="{{$agent->fb_link}}"><i class="fab fa-facebook-f"></i></a>
                                     <a class="btn btn-square mx-1" href="{{$agent->x_link}}"><i class="fab fa-twitter"></i></a>
@@ -190,8 +213,10 @@
                                 </div>
                             </div>
                             <div class="text-center p-4 mt-3">
-                                <h5 class="fw-bold mb-0">{{$agent->fullname}}</h5>
-                                <small>{{ $agent->designation}}</small>
+                                <a href="{{ route('builders.show', $agent->id) }}">
+                                    <h5 class="fw-bold mb-0">{{$agent->fullname}}</h5>
+                                    <small>{{ $agent->business_name}}</small>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -200,7 +225,7 @@
                 </div>
             </div>
         </div>
-        <!-- Team End -->
+        <!-- Builder End -->
         
 
 @endsection

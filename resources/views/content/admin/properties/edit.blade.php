@@ -9,6 +9,11 @@
 @endsection
 
 @section('content')
+<style>
+.ck-editor__editable_inline {
+    min-height: 300px; /* adjust as you like */
+}
+</style>
 <div class="row">
     <div class="col-md-12">
         <div class="nav-align-top">
@@ -56,6 +61,15 @@
             </select>
         </div>
         <div class="mb-3">
+        <label>Property Builder</label>
+        <select name="builder_id" class="form-control" required>
+            <option value="">Select Builder Name</option>
+            @foreach($builders as $builder)
+                <option value="{{ $builder->id }}" {{ $property->builder_id == $builder->id ? 'selected' : '' }}>{{ $builder->fullname }}</option>
+            @endforeach
+        </select>
+        </div>
+        <div class="mb-3">
             <label>Property Name</label>
             <input type="text" name="pro_name" value="{{ old('pro_name', $property->pro_name) }}" class="form-control" required>
         </div>
@@ -78,31 +92,7 @@
             <label>Bathrooms</label>
             <input type="number" name="pro_bath" value="{{ old('pro_bath', $property->pro_bath) }}" class="form-control">
         </div>
-          <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea name="description" id="description" class="form-control" rows="4">{{ old('description', $property->description ?? '') }}</textarea>
-        </div>
-        <div class="mb-3">           
-            @if($property->pro_img && file_exists(public_path($property->pro_img)))
-                <div class="mt-2">
-                    <p>Current Property Image:</p>
-                    <img src="{{ asset($property->pro_img) }}" alt="Property Image" width="150" height="100" class="rounded shadow">
-                </div>
-            @endif
-             <label>Change Property Image</label>
-            <input type="file" name="pro_img" class="form-control">
-        </div>  
-        <div class="mb-3">            
-              @if($property->catalog && file_exists(public_path($property->catalog)))
-                <div class="mt-2">                    
-                    <p>Current Catelog (PDF):</p>
-                    <a href="{{ asset($property->catalog) }}" target="_blank">{{ asset($property->catalog) }}</a>                    
-                </div>
-            @endif
-            <label for="catalog" class="form-label">Change Catalog (PDF)</label>
-            <input type="file" name="catalog" id="catalog" accept="application/pdf" class="form-control">
-        </div>
-        <div class="mb-3">
+         <div class="mb-3">
             <label class="form-label">Tags</label>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="for_sell" id="for_sell" value="1" {{ old('for_sell', $property->for_sell ?? false) ? 'checked' : '' }}>
@@ -119,68 +109,98 @@
                 <label class="form-check-label" for="featured">Featured</label>
             </div>
         </div>
-      
-        <div class="mb-3">
-            @if($property->images->count())
-                <h5 class="mt-4">Existing Images</h5>
-                <div class="row" id="image-list">
-                    @foreach($property->images as $image)
-                 
-                <div id="image-{{ $image->id }}" class="col-md-3">
-                    <img src="{{ asset($image->image) }}" class="img-fluid my-2" alt="Property Image">
-                    <button type="button" class="btn btn-sm btn-danger" onclick="deleteImage({{ $image->id }})">Delete</button>
-                </div>
-                    @endforeach
-                </div>
-                
-            @endif
-        </div>
+        
           <div class="mb-3">
-            <label for="images" class="form-label">Add Gallery Images</label>
-            <input type="file" name="images[]" id="images" multiple accept="image/*" class="form-control">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" class="form-control" style="min-height:300px;"> {{ old('description', $property->description ?? '') }}</textarea>
         </div>
-
-        <div class="mb-3">
-            @if($property->videos->count())
-            <h5 class="mt-4">Existing Videos</h5>
-            <div class="row" id="video-list">
-                @foreach($property->videos as $video)
-                <div class="col-md-4 mb-3 text-center video-item" data-id="{{ $video->id }}">
-                    @if(Str::contains($video->video, 'youtube.com') || Str::contains($video->video, 'youtu.be'))
-                        <iframe width="100%" height="200" src="{{ $video->video }}" frameborder="0" allowfullscreen></iframe>
-                    @else
-                        <video width="100%" height="200" controls>
-                            <source src="{{ asset($video->video) }}" type="video/mp4">
-                        </video>
-                    @endif
-                    
-                    {{-- Delete button --}}
-                    <form action="{{ route('property.video.delete', $video->id) }}" method="POST" class="mt-2">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this video?')">
-                            Delete
-                        </button>
-                    </form>
-
-                    <!-- <button type="button"
-                        class="btn btn-sm btn-danger mt-2 delete-video"
-                        data-id="{{ $video->id }}">
-                        Delete
-                    </button> -->
+    <div class="row">
+        <div class="my-3 col-md-6 border border-primary">     
+            <label>Change Property Image</label>
+            <input type="file" name="pro_img" class="form-control">      
+            @if($property->pro_img && file_exists(public_path($property->pro_img)))
+                <div class="mt-2">
+                    <p>Current Property Image:</p>
+                    <img src="{{ asset($property->pro_img) }}" alt="Property Image" width="150" height="100" class="rounded shadow">
                 </div>
-                @endforeach
+            @endif
+             
+        </div>  
+
+        <div class="my-3 col-md-6 border border-primary">       
+             <label for="catalog" class="form-label">Change Catalog (PDF)</label>
+            <input type="file" name="catalog" id="catalog" accept="application/pdf" class="form-control">     
+              @if($property->catalog && file_exists(public_path($property->catalog)))
+                <div class="mt-2">                    
+                    <p>Current Catelog (PDF):</p>
+                    <a href="{{ asset($property->catalog) }}" target="_blank">{{ asset($property->catalog) }}</a>                    
+                </div>
+            @endif
+           
+        </div>
+    </div>
+       
+      <div class="card">
+        <h5 class="card-header">Product Gallery Images</h5>
+        <div class="card-body">
+            <div class="mb-3">
+                <h5 class="mt-2 card-title">Existing Images</h5>                   
+                @if($property->images->count())
+                    <div class="row" id="image-list">
+                        @foreach($property->images as $image)
+                    
+                    <div id="image-{{ $image->id }}" class="col-md-3 border border-primary text-center">
+                        <img src="{{ asset($image->image) }}" class="img-fluid my-2" alt="Property Image">
+                        <button type="button" class="btn btn-sm btn-danger mb-1" onclick="deleteImage({{ $image->id }})">Delete</button>
+                    </div>
+                        @endforeach
+                    </div>                    
+                @endif
+            </div> 
+        </div>
+        <div class="card-footer">
+             <label for="images" class="form-label">Add More Gallery Images</label>
+                <input type="file" name="images[]" id="images" multiple accept="image/*" class="form-control">
+        </div>
+      </div>
+        <div class="card mt-2">
+          <h5 class="card-header">Product Videos</h5>
+            <div class="card-body">
+                <div class="mb-3">
+                    @if($property->videos->count())
+                    <h5 class="mt-2 card-title">Existing Videos</h5>
+                    <div class="row" id="video-list">
+                        @foreach($property->videos as $video)
+                        <div class="col-md-4 mb-3 text-center video-item border border-primary" id="image-{{ $video->id }}"  data-id="{{ $video->id }}">
+                            @if(Str::contains($video->video, 'youtube.com') || Str::contains($video->video, 'youtu.be'))
+                                <iframe width="100%" height="200" src="{{ $video->video }}" frameborder="0" allowfullscreen></iframe>
+                            @else
+                                <video width="100%" height="200" controls>
+                                    <source src="{{ asset($video->video) }}" type="video/mp4">
+                                </video>
+                            @endif                
+                            <button type="button" class="btn btn-sm btn-danger mb-1" onclick="deleteVideo({{ $video->id }})"> <i class="bx bxs-trash"></i> Delete</button>                   
+
+                        </div>
+                        @endforeach
+                    </div>
+                @endif
+                </div>
             </div>
-        @endif
+             <div class="card-footer">
+                 <div class="mb-3">
+                    <label for="videos" class="form-label">Add New Property Videos</label>
+                    <input type="file" name="videos[]" id="videos" class="form-control" multiple accept="video/*">
+                </div>
+                <div>OR</div>
+                <div class="mb-3">
+                    <label for="video_links" class="form-label">Add YouTube Video Links (comma-separated)</label>
+                    <input type="text" name="video_links" id="video_links" class="form-control" placeholder="https://youtube.com/..., https://youtu.be/...">
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="videos" class="form-label">Add New Property Videos</label>
-            <input type="file" name="videos[]" id="videos" class="form-control" multiple accept="video/*">
-        </div>
-        <div class="mb-3">
-            <label for="video_links" class="form-label">Add YouTube Video Links (comma-separated)</label>
-            <input type="text" name="video_links" id="video_links" class="form-control" placeholder="https://youtube.com/..., https://youtu.be/...">
-        </div>
+               
+
          {{-- Latitude --}}
         <div class="mb-3">
             <label for="latitude" class="form-label">Latitude</label>
@@ -334,8 +354,69 @@ function deleteImage(imageId) {
         });
     }
 }
+
+function deleteVideo(videoId) {
+    if (confirm('Are you sure you want to delete this Video?')) {
+        fetch(`/delete-video/${videoId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
+            }
+        })
+        .then(async response => {
+            // Safely handle both JSON and non-JSON responses
+            let data;
+            try {
+                data = await response.json();
+            } catch (e) {
+                console.error('Invalid JSON:', e);
+                alert('Unexpected response from server.');
+                return;
+            }
+
+            if (response.ok && data.success) {
+                alert(data.message);
+                const imgDiv = document.getElementById('image-' + videoId);
+                if (imgDiv) imgDiv.remove();
+            } else {
+                alert(data.message || 'Error deleting video.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Error deleting video.');
+        });
+    }
+}
 </script>
 
+<script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#description'), {
+        toolbar: {
+            items: [
+                'heading', '|',
+                'bold', 'italic', 'underline', 'fontColor', 'fontBackgroundColor', '|',
+                'bulletedList', 'numberedList', '|',
+                'link', 'blockQuote', 'undo', 'redo'
+            ]
+        },
+        fontColor: {
+            colors: [
+                { color: 'hsl(0, 0%, 0%)', label: 'Black' },
+                { color: 'hsl(0, 75%, 60%)', label: 'Red' },
+                { color: 'hsl(30, 75%, 60%)', label: 'Orange' },
+                { color: 'hsl(120, 75%, 60%)', label: 'Green' },
+                { color: 'hsl(240, 75%, 60%)', label: 'Blue' }
+            ]
+        }
+    })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
 
 
 @endsection

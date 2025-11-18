@@ -55,12 +55,12 @@
                     <div class="row g-6">
                         <div class="col-md-12">
                             <label for="firstName" class="form-label">Name</label>
-                            <input class="form-control" type="text" id="firstName" name="name" value="" autofocus />
+                            <input class="form-control" type="text" id="firstName" name="name" value="" autofocus required/>
                         </div>
                         <div class="col-md-12">
                             <label for="lastName" class="form-label">Description </label>
                             <!-- <input class="form-control" type="text" name="description" id="description" value="" /> -->
-                              <textarea name="description" class="form-control"></textarea>
+                              <textarea name="description" class="form-control" required></textarea>
                         </div>
                          
                        

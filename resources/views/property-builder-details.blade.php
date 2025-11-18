@@ -1,17 +1,17 @@
 @extends('layoutsFront.main')
-@section('title', 'Property Types')
+@section('title', 'Property Details')
 
 @section('content')
         <!-- Header Start -->
         <div class="container-fluid header bg-white p-0">
             <div class="row g-0 align-items-center flex-column-reverse flex-md-row">
                 <div class="col-md-6 p-5 mt-lg-5">
-                    <h1 class="display-5 animated fadeIn mb-4">Property Type</h1> 
+                    <h1 class="display-5 animated fadeIn mb-4">Builder Details</h1> 
                         <nav aria-label="breadcrumb animated fadeIn">
                         <ol class="breadcrumb text-uppercase">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                            <li class="breadcrumb-item text-body active" aria-current="page">Property Type</li>
+                            <!-- <li class="breadcrumb-item"><a href="#">Pages</a></li> -->
+                            <li class="breadcrumb-item text-body active" aria-current="page">{{ $propertyBuilders->fullname }}</li>
                         </ol>
                     </nav>
                 </div>
@@ -22,69 +22,55 @@
         </div>
         <!-- Header End -->
 @include('layoutsFront.header-search') 
-
-               <!-- Category Start -->
+        <!--  Start -->
         <div class="container-xxl py-5">
             <div class="container">
-                <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h1 class="mb-3">Property Types</h1>
-                    <p>Eirmod sed ipsum dolor sit rebum labore magna erat. Tempor ut dolore lorem kasd vero ipsum sit eirmod sit. Ipsum diam justo sed rebum vero dolor duo.</p>
+                <div class="row g-5 align-items-center">
+                    <!-- <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
+                        <div class="about-img position-relative overflow-hidden p-5 pe-0">
+                            <img class="img-fluid w-100" src="{{ asset($propertyBuilders->image) }}" alt="">
+                        </div>
+                    </div> -->
+                    <div class="col-md-6 animated fadeIn">                                        
+                            <div class="about-img position-relative overflow-hidden p-5 pe-0">
+                                <img class="img-fluid" src="{{ asset($propertyBuilders->image) }}" alt="">
+                            </div>                   
                 </div>
-                <div class="row g-4">
-                    @foreach($types as $type)
-                     @php
-                        $isActive = isset($type_slug) && $type->name === $type_slug->name;
-                    @endphp
-                    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <a class="cat-item d-block text-center rounded p-3 {{ $isActive ? 'bg-primary text-white' : 'bg-light' }}" href="{{ route('property.byType', $type->name) }}">
-                            <div class="rounded p-4 {{ $isActive ? 'bg-primary text-white' : 'bg-light' }}">
-                                <div class="icon mb-3">
-                                    <!-- <img class="img-fluid" src="{{ Vite::asset('resources/img/icon-apartment.png') }}"  alt="Icon"> -->
-                                    <img class="img-fluid" src="{{ asset($type->type_img ?? 'assets/img/icon-apartment.png') }}"  alt="Icon">
-                                </div>     
-                                <h6>
-                                    {{$type->name}}  
-                                </h6 >
-                              
-                                <!-- <span>123 Properties</span> -->
-                                <span>{{$type->properties_count}} Properties</span>
-                            </div>
-                        </a>
+
+                    <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+                        <h1 class="mb-4">{{ $propertyBuilders->fullname }}</h1>
+                        <p class="mb-4">Business Name: <span class="text-primary">{{ $propertyBuilders->business_name }}</span></p>
+                        <p><i class="fa fa-check text-primary me-3"></i>{{ $propertyBuilders->phone }} </p>      
+                        <p><i class="fab fa-facebook-f text-primary me-3"></i><a href="{{ $propertyBuilders->fb_link }}" target="_blank"> Facebook</a> </p>      
+                        <p><i class="fab fa-instagram text-primary me-3"></i> <a href="{{ $propertyBuilders->insta_link }}" target="_blank" rel="noopener noreferrer">Instagram</a> </p>      
+                        <p><i class="fab fa-twitter text-primary me-3"></i><a href="{{ $propertyBuilders->x_link }}" target="_blank" rel="noopener noreferrer">Twitter</a> </p>   
+                           
                     </div>
-                    @endforeach                   
+                    <div class="col-md-12">
+                        <h3>More about <span class="text-primary">{{ $propertyBuilders->business_name }}</span></h3>
+                        <div>                   
+                            {!! $propertyBuilders->description !!}
+                        </div>
+                    </div>                   
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- Category End -->
-
-        <!-- Property List Start -->
+        <!-- End -->
+  <!-- Property List Start -->
         <div class="container-xxl py-5">
             <div class="container">
                 <div class="row g-0 gx-5 align-items-end">
                     <div class="col-lg-6">
                         <div class="text-start mx-auto mb-5 wow slideInLeft" data-wow-delay="0.1s">
-                            <h2 class="mb-3">Properties For <span class="text-primary">{{ $type_slug->name }}</span> </h2>
-                            <p>{{ $type_slug->description }}</p>
+                            <h2 class="mb-3">Explore  <span class="text-primary">{{ $propertyBuilders->business_name  }} </span> projects</h2>
+                         
                         </div>
-                    </div>
-                    <div class="col-lg-6 text-start text-lg-end wow slideInRight" data-wow-delay="0.1s">
-                        <ul class="nav nav-pills d-inline-flex justify-content-end mb-5">
-                            <li class="nav-item me-2">
-                                <a class="btn btn-outline-primary active" data-bs-toggle="pill" href="#tab-1">Featured</a>
-                            </li>
-                            <li class="nav-item me-2">
-                                <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-2">For Sell</a>
-                            </li>
-                            <li class="nav-item me-0">
-                                <a class="btn btn-outline-primary" data-bs-toggle="pill" href="#tab-3">For Rent</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                    </div>                   
                 <div class="tab-content">
                     <div id="tab-1" class="tab-pane fade show p-0 active">
                         <div class="row g-4">
-                             @forelse($properties as $property)
+                             @forelse($propertyBuilders->properties  as $property)
                             <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                                 <div class="property-item rounded overflow-hidden">
                                     <div class="position-relative overflow-hidden">

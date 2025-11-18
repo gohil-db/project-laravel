@@ -16,6 +16,7 @@ class Property extends Model
         'pro_bath',
         'pro_img',
         'type_id',
+        'builder_id',
         'latitude',
         'longitude',
         'for_sell',
@@ -23,11 +24,17 @@ class Property extends Model
         'featured',
         'catalog',
         'description',
+        'display_top',
     ];
 
     public function type()
     {
         return $this->belongsTo(PropertyType::class, 'type_id');
+    }
+    
+    public function builder()
+    {
+        return $this->belongsTo(Builder::class);
     }
 
     public function images()

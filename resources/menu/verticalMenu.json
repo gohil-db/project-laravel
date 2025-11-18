@@ -94,6 +94,24 @@
         }
       ]
     },
+     {    
+      "name": "Builders",
+      "icon": "menu-icon icon-base bx bx-dock-top",
+      "slug": "admin-builders",
+      "submenu": [
+      
+        {
+          "url": "admin/property-builders-list",
+          "name": "Builder List",
+          "slug": "admin-builders-list"
+        },
+        {
+          "url": "admin/property-builders-create",
+          "name": "Add Builder",
+          "slug": "admin-builders-create"
+        }
+      ]
+    },
     
     {
       "menuHeader": "Components"

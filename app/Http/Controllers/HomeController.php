@@ -10,20 +10,23 @@ use App\Models\HeaderSlider;
 use App\Models\Setting;
 use App\Models\Property;
 use App\Models\Testimonial;
+use App\Models\Builder;
 
 class HomeController extends Controller
 {
     public function index()
-    {
-        // $setting = Setting::first();
-        // $types = PropertyType::all();        
-        $types = PropertyType::withCount('properties')->get();
-        $sliders = HeaderSlider::all();
-        $properties = Property::all();
+    {              
+     
+        $types = PropertyType::withCount(['properties' => function ($q) { $q->where('status', 1); }])->get();
+        // $sliders = HeaderSlider::all();
+        $topSlidersProperties = Property::where('display_top', 1)->where('status', 1)->get();
+        $properties = Property::where('status',1)->orderBy('id', 'desc')->limit(6)->get();
         $testimonials = Testimonial::all();
         $propertyAgents = PropertyAgent::all();
+        $propertyBuilders = Builder::all();
 
-        return view('index',compact('types','properties','sliders','testimonials','propertyAgents')); // resources/views/index.blade.php
+
+        return view('index',compact('types','properties','topSlidersProperties','testimonials','propertyAgents','propertyBuilders')); // resources/views/index.blade.php
     }
 
     public function about()
@@ -45,7 +48,7 @@ class HomeController extends Controller
     {
         // $setting = Setting::first();
         $types = PropertyType::withCount('properties')->get();
-        $properties = Property::all();
+        $properties = Property::where('status', 1)->paginate(6);    
         return view('property-list',compact('types','properties')); // resources/views/contact.blade.php
     }
     public function propertyAgent()
@@ -53,13 +56,27 @@ class HomeController extends Controller
         $setting = Setting::first();
         $types = PropertyType::withCount('properties')->get();
         $properties = Property::all();
-        return view('property-agent',compact('types','properties')); // resources/views/contact.blade.php
+        $propertyAgents = PropertyAgent::all();
+        return view('property-agent',compact('types','properties','propertyAgents')); // resources/views/contact.blade.php
     }
-    public function propertyType()
+
+    public function getFilterPropertiesAjax(Request $request)
     {
-        // $setting = Setting::first();
-        $types = PropertyType::withCount('properties')->get();
-        $properties = Property::all();
-        return view('property-type',compact('types','properties')); // resources/views/contact.blade.php
+        $filter = $request->filter;    
+        $query = Property::with('type')->where('status', 1);
+
+        if ($filter === 'featured') {
+            $query->where('featured', 1);
+        } elseif ($filter === 'sell') {
+            $query->where('for_sell', 1);
+        } elseif ($filter === 'rent') {
+            $query->where('for_rent', 1);
+        }
+
+        $properties = $query->orderBy('id', 'desc')->limit(9)->get();
+
+        return response()->json($properties);
     }
+
+   
 }

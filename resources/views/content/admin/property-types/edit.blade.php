@@ -65,13 +65,13 @@
             </div>
             <div class="card-body pt-4">               
                     <div class="row g-6">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label for="firstName" class="form-label">Type Name</label>
                             <input class="form-control" type="text" id="firstName" name="name" value="{{ old('name', $propertyType->name) }}" autofocus required/>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label for="lastName" class="form-label">Description </label>
-                            <input class="form-control" type="text" name="description" id="lastName" value="{{ old('description', $propertyType->description) }}" required/>
+                              <textarea name="description" class="form-control">{{ old('description', $propertyType->description) }}</textarea>
                         </div>
                          
                     </div>

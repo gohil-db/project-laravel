@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use App\Models\Inquiry;
 use App\Models\PropertyVideo;
 use App\Models\PropertyAgent;
+use App\Models\Builder;
 use Illuminate\Support\Facades\File;
 
 class PropertyController extends Controller
@@ -23,7 +24,7 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        $properties = Property::with('type')->get();
+        $properties = Property::with('type')->paginate(10);    
         return view('content.admin.properties.index', compact('properties'));
     }
 
@@ -35,7 +36,8 @@ class PropertyController extends Controller
     public function create()
     {
         $types = PropertyType::all();
-        return view('content.admin.properties.create', compact('types'));
+        $builders = Builder::all();
+        return view('content.admin.properties.create', compact('types','builders'));
     }
 
     /**
@@ -53,6 +55,7 @@ class PropertyController extends Controller
             'pro_bed' => 'required|integer|min:0',
             'pro_bath' => 'required|integer|min:0',
             'type_id' => 'required|exists:property_types,id',
+            'builder_id' => 'required|exists:builders,id',
             'pro_img' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -63,7 +66,7 @@ class PropertyController extends Controller
         ]);
 
         $data = $request->only([
-            'pro_name', 'pro_address', 'pro_area', 'pro_bed', 'pro_bath', 'type_id','latitude', 'longitude','description'
+            'pro_name', 'pro_address', 'pro_area', 'pro_bed', 'pro_bath', 'type_id','builder_id', 'latitude', 'longitude','description'
         ]);
 
         if ($request->hasFile('pro_img')) {
@@ -76,7 +79,7 @@ class PropertyController extends Controller
         $data['for_sell'] = $request->has('for_sell');
         $data['for_rent'] = $request->has('for_rent');
         $data['featured'] = $request->has('featured');
-
+        $data['display_top'] = $request->boolean('display_top');
         if ($request->hasFile('catalog')) {
             $file = $request->file('catalog');
             $filename = time() . '.' . $file->getClientOriginalExtension();
@@ -130,10 +133,11 @@ class PropertyController extends Controller
     {
         
         $types = PropertyType::all();
-        $property = Property::with('type')->findOrFail($id);
+        $property = Property::with(['type', 'builder'])->findOrFail($id);
         $properties = Property::with('type')->get(); 
         $propertyAgents = PropertyAgent::all();        
-        return view('details', compact('properties','property','types','propertyAgents'));
+        $propertyBuilders = Builder::all();        
+        return view('details', compact('properties','property','types','propertyAgents','propertyBuilders'));
       
     }
 
@@ -146,7 +150,8 @@ class PropertyController extends Controller
     public function edit(Property $property)
     {
         $types = PropertyType::all();
-        return view('content.admin.properties.edit', compact('property', 'types'));
+        $builders = Builder::all();
+        return view('content.admin.properties.edit', compact('property', 'types','builders'));
     }
 
     /**
@@ -165,6 +170,7 @@ class PropertyController extends Controller
             'pro_bed' => 'nullable|integer|min:0',
             'pro_bath' => 'nullable|integer|min:0',
             'type_id' => 'required|exists:property_types,id',
+            'builder_id' => 'required|exists:builders,id',
             'pro_img' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
@@ -174,7 +180,7 @@ class PropertyController extends Controller
         ]);
 
         $data = $request->only([
-            'pro_name', 'pro_address', 'pro_area', 'pro_bed', 'pro_bath', 'type_id','latitude', 'longitude','description'
+            'pro_name', 'pro_address', 'pro_area', 'pro_bed', 'pro_bath', 'type_id','builder_id', 'latitude', 'longitude','description'
         ]);
          // Convert checkboxes (unchecked = 0)
         $data['for_sell'] = $request->has('for_sell');
@@ -252,8 +258,7 @@ class PropertyController extends Controller
         foreach ($property->images as $img) {
             Storage::disk('public')->delete($img->image);
             $img->delete();
-        }
-      
+        }      
 
         $property->delete();
         return redirect()->route('admin-property-list')->with('success', 'Property deleted successfully.');
@@ -332,17 +337,25 @@ class PropertyController extends Controller
     // }
 
     public function deleteVideo($id)
-    {
-        $video = PropertyVideo::findOrFail($id);
+    {   
 
-        // Delete video file if it exists and is not a YouTube link
-        if ($video->video && File::exists(public_path($video->video))) {
-            File::delete(public_path($video->video));
+        try {
+            $video = PropertyVideo::findOrFail($id);
+
+            if (file_exists(public_path($video->video))) {
+                unlink(public_path($video->video));
+            }
+
+            $video->delete();
+
+            return response()->json(['success' => true, 'message' => 'Video deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting Video',
+                'error' => $e->getMessage()
+            ]);
         }
-
-        $video->delete();
-
-        return redirect()->back()->with('success', 'Video deleted successfully.');
     }
 
     public function deleteImage22($id)
@@ -398,4 +411,32 @@ class PropertyController extends Controller
         $inquiry->delete();
         return redirect()->back()->with('success', 'Inquiry deleted successfully.');
     }
+
+    public function propertyStatus($id)
+    {
+        $property = Property::findOrFail($id);
+        $property->status = !$property->status; // flip 1 -> 0 or 0 -> 1
+        $property->save();
+
+        return response()->json([
+            'success' => true,
+            'status' => $property->status
+        ]);
+    }
+
+    public function toggleTop($id)
+    {
+        $property = Property::findOrFail($id);
+        
+        $property->display_top = !$property->display_top;
+        $property->save();
+
+        return response()->json([
+            'success' => true,
+            'display_top' => $property->display_top
+        ]);
+    }
+
+
+
 }

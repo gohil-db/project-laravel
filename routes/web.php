@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
 
+use App\Http\Controllers\dashboard\Analytics;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PropertyTypeController;
@@ -11,17 +12,24 @@ use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\PropertyAgentController;
-use App\Http\Controllers\dashboard\Analytics;
+use App\Http\Controllers\BuilderController;
+
 
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/property/property-list', [HomeController::class, 'propertyList'])->name('propertyList');
-Route::get('/property/property-type', [HomeController::class, 'propertyType'])->name('propertyType');
+Route::get('/property/property-builder', [BuilderController::class, 'propertyBuilderList'])->name('property-builder');
+Route::get('/property-builder/{slug}', [BuilderController::class, 'show'])->name('builders.show');
+Route::get('/ajax/filter-properties', [HomeController::class, 'getFilterPropertiesAjax'])->name('ajax.properties');
+
+
 Route::get('/property/property-agent', [HomeController::class, 'propertyAgent'])->name('propertyAgent');
 Route::get('/property/{id}', [PropertyController::class, 'show'])->name('propertiesList.show');
 Route::post('/property/{property}/inquiry', [PropertyController::class, 'storeInquiry'])->name('property.inquiry');
+Route::get('/property/type/{slug}', [PropertyTypeController::class, 'propertyByType'])->name('property.byType');
+
 
 //Search 
 Route::get('/search', [PropertyController::class, 'search'])->name('property.search');
@@ -61,8 +69,11 @@ Route::get('/admin/property-list', [PropertyController::class, 'index'])->name('
 Route::get('/admin/property-create', [PropertyController::class, 'create'])->name('admin-property-create');
 // Route::resource('/admin/property', PropertyTypeController::class);
 Route::resource('properties', PropertyController::class);
-Route::delete('/property-video/{id}', [PropertyController::class, 'deleteVideo'])->name('property.video.delete');
+// Route::delete('/property-video/{id}', [PropertyController::class, 'deleteVideo'])->name('property.video.delete');
 Route::delete('/delete-image/{id}', [PropertyController::class, 'deleteImage'])->name('property.image.delete');
+Route::delete('/delete-video/{id}', [PropertyController::class, 'deleteVideo'])->name('property.video.delete');
+Route::patch('/properties/{id}/property-status', [PropertyController::class, 'propertyStatus'])->name('properties.propertyStatus');
+Route::patch('/properties/{id}/toggle-top', [PropertyController::class, 'toggleTop'])->name('properties.toggleTop');
 
 
 // Testimonials
@@ -75,6 +86,11 @@ Route::resource('testimonials', TestimonialController::class);
 Route::get('/admin/property-agents-list', [PropertyAgentController::class, 'index'])->name('admin-agents-list');
 Route::get('/admin/property-agents-create', [PropertyAgentController::class, 'create'])->name('admin-agents-create');
 Route::resource('property-agents', PropertyAgentController::class);
+
+//property Builder
+Route::get('/admin/property-builders-list', [BuilderController::class, 'index'])->name('admin-builders-list');
+Route::get('/admin/property-builders-create', [BuilderController::class, 'create'])->name('admin-builders-create');
+Route::resource('property-builders', BuilderController::class);
 
  Route::get('/admin/inquiriesList', [PropertyController::class, 'inquiriesList'])->name('admin.property.inquiriesList');
 Route::delete('/admin/inquiries/{inquiry}', [PropertyController::class, 'destroyInquiry'])->name('inquiries.destroy');

@@ -10,12 +10,12 @@
                                 <div id="suggestions" class="list-group position-absolute  d-none shadow-sm"></div>
                             </div>
                             <div class="col-md-4">                                                
-                                <select name="type_id" class="form-select border-0 py-3">
-                                    <option value="">Property Type</option>
-                                    @foreach($types as $type)
-                                        <option value="{{ $type->id }}">{{ $type->name }}</option>
-                                    @endforeach
-                                </select>
+                            <select name="type_id" class="form-select border-0 py-3">
+                                <option value="">Property Type</option>
+                                @foreach($types as $type)
+                                <option value="{{ $type->id }}">{{ $type->name }}</option>
+                                @endforeach
+                            </select>
                             </div>
                             <div class="col-md-4 position-relative">
                                  <input type="text" name="location" id="location" class="form-control border-0 py-3"  placeholder="Location" autocomplete="off">
@@ -45,7 +45,7 @@
         <!-- Search End -->
 
 <script>
-    let propertiesList = @json($properties);
+    let propertiesList = @json($global_properties);
 document.addEventListener("DOMContentLoaded", () => {
 
     const searchInput = document.getElementById("search");

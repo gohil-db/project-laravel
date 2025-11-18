@@ -25,7 +25,6 @@
             </ul>
         </div>
         <div class="card mb-6">
-<!-- <div class="container mt-4"> -->
 
     {{-- Success Message --}}
     @if (session('success'))
@@ -54,13 +53,14 @@
                 <th>Area (sqft)</th>
                 <th>Bed</th>
                 <th>Bath</th>
+                <th>Home Top</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($properties as $key => $property)
                 <tr>
-                    <td>{{ $key + 1 }}</td>
+                    <td>{{ $properties->firstItem() + $key }}</td>
                     <td>
                         @if($property->pro_img && file_exists(public_path($property->pro_img)))
                             <img src="{{ asset($property->pro_img) }}" alt="Property" width="80" height="60" class="rounded">
@@ -75,12 +75,21 @@
                     <td>{{ $property->pro_bed ?? '-' }}</td>
                     <td>{{ $property->pro_bath ?? '-' }}</td>
                     <td>
+                        <button class="btn btn-sm toggle-top-btn {{ $property->display_top ? 'btn-info' : 'btn-danger' }}" data-id="{{ $property->id }}">
+                            {{ $property->display_top ? 'Yes' : 'No' }}
+                        </button>
+                    </td>
+
+                    <td>
+                        <button class="btn btn-sm toggle-status {{ $property->status ? 'btn-success' : 'btn-danger' }}" data-id="{{ $property->id }}">
+                            {{ $property->status ? 'Active' : 'Inactive' }}
+                        </button>
                         <a href="{{ route('properties.edit', $property->id) }}" class="btn btn-sm btn-warning">Edit</a>
 
                         <form action="{{ route('properties.destroy', $property->id) }}" method="POST" class="d-inline">
                             @csrf 
                             @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this property?')">Delete</button>
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this property?')"><i class="bx bx-trash me-1"> </i>Del</button>
                         </form>
                     </td>
                 </tr>
@@ -91,9 +100,71 @@
             @endforelse
         </tbody>
     </table>
-<!-- </div> -->
+        {{-- Pagination Links --}}
+        <div class="mt-3">        
+            {{ $properties->links('pagination::bootstrap-5') }} 
+        </div>
+
 </div>
 </div>
 </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on('click', '.toggle-status', function() {
+        const button = $(this);
+        const propertyId = button.data('id');
+        $.ajax({
+            url: `/properties/${propertyId}/property-status`,
+            type: 'PATCH',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    if (response.status) {
+                        button.removeClass('btn-danger').addClass('btn-success').text('Active');
+                    } else {
+                        button.removeClass('btn-success').addClass('btn-danger').text('Inactive');
+                    }
+                    alert('Property status Update Successfully.');
+                }
+            },
+            error: function() {
+                alert('Error updating status.');
+            }
+        });
+    });
+</script>
+
+
+<script>
+    $(document).on('click', '.toggle-top-btn', function () {
+        let button = $(this);
+        let id = button.data('id');
+
+        $.ajax({
+            url: "/properties/" + id + "/toggle-top",
+            method: "PATCH",
+            data: {
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(res) {
+                if (res.success) {
+                    if (res.display_top) {
+                        button.removeClass('btn-danger').addClass('btn-info');
+                        button.text('Yes');
+                    } else {
+                        button.removeClass('btn-info').addClass('btn-danger');
+                        button.text('No');
+                    }
+                }
+            },
+            error: function() {
+                alert("Error updating display_top!");
+            }
+        });
+    });
+</script>
+
 @endsection

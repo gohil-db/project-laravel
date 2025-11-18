@@ -48,7 +48,7 @@
         <tbody>
             @forelse ($testimonials as $key => $testimonial)
                 <tr>
-                    <td>{{ $key + 1 }}</td>
+                    <td>{{ $testimonials->firstItem() + $key }}</td>
                     <td>{{ $testimonial->client_name }}</td>
                     <td>{{ $testimonial->profession ?? '-' }}</td>
                     <td>{{ Str::limit($testimonial->description, 60) }}</td>
@@ -73,6 +73,10 @@
             @endforelse
         </tbody>
     </table>
+        {{-- Pagination Links --}}
+        <div class="mt-3">        
+            {{ $testimonials->links('pagination::bootstrap-5') }}
+        </div>
 
 </div>
 </div>

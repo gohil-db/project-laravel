@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\Setting;
+use App\Models\Property;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,5 +33,15 @@ class AppServiceProvider extends ServiceProvider
 
         // Share to all Blade views
         View::share('setting', $setting);
+
+         $global_properties = cache()->remember('global_properties', 60 * 60, function () {
+            return Property::where('status', 1)
+                ->select('id', 'pro_name')
+                ->orderBy('pro_name')
+                ->get();
+        });
+
+        View::share('global_properties', $global_properties);
     }
+        
 }

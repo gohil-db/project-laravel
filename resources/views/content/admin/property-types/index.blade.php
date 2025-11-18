@@ -17,10 +17,7 @@
                 </li>
                  <li class="nav-item">
                     <a class="nav-link" href="{{ url('/admin/property-types-create') }}"><i class="icon-base bx bx-bell icon-sm me-1_5"></i> Add New Type</a>
-                </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="{{ url('pages/account-settings-connections') }}"><i class="icon-base bx bx-link-alt icon-sm me-1_5"></i> Connections</a>
-                </li> -->
+                </li>               
             </ul>
         </div>
         <div class="card mb-6">
@@ -49,7 +46,7 @@
             <tbody class="table-border-bottom-0">
                  @foreach($types as $type)
                 <tr>
-                    <td><span>{{ $loop->iteration }}</span></td>
+                    <td><span>{{  $types->firstItem() + $loop->iteration - 1 }} </span></td>
                     <td><span>{{ $type->name }}</span></td>
                     <td>{{ $type->description }}</td>
                     <td>
@@ -60,7 +57,7 @@
                         <a href="{{ route('property-types.edit', $type->id) }}" class="btn btn-sm btn-warning">Edit</a>
                         <form action="{{ route('property-types.destroy', $type->id) }}" method="POST" class="d-inline">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this type?')">Delete</button>
+                            <button class="btn btn-sm btn-danger" onclick="return confirm('Delete this type?')"> <i class="bx bx-trash me-1"> </i></button>
                         </form>
                     </td>
                     <!-- <td>
@@ -76,6 +73,10 @@
                 @endforeach   
             </tbody>
         </table>
+        {{-- Pagination Links --}}
+        <div class="mt-3">        
+            {{ $types->links('pagination::bootstrap-5') }} 
+        </div>
     </div>
 </div>
 <!-- </div> -->

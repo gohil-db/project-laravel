@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PropertyType;
 use Illuminate\Http\Request;
+use App\Models\Property;
 
 class PropertyTypeController extends Controller
 {
@@ -14,7 +15,7 @@ class PropertyTypeController extends Controller
      */
     public function index()
     {
-        $types = PropertyType::all();
+        $types = PropertyType::paginate(10);
         
         return view('content.admin.property-types.index', compact('types'));
     }
@@ -118,5 +119,26 @@ class PropertyTypeController extends Controller
        return redirect()->back()->with('success', 'Property type deleted successfully.');
         // return redirect()->route('property-types.index')
         //     ->with('success', 'Property type deleted successfully.');
+    }
+    public function propertyType()
+    {
+       
+        $types = PropertyType::withCount(['properties' => function ($q) { $q->where('status', 1); }])->get();
+        $properties = Property::all()->where('status',1);
+        return view('property-type',compact('types','properties')); 
+        
+    }
+    
+    // Show all properties of a specific type
+    public function propertyByType($slug)
+    {
+        // Find type by name (like "Apartment" or "Villa")
+        $type_slug = PropertyType::where('name', $slug)->firstOrFail();
+        // Get properties belonging to that type
+        $properties = Property::where('type_id', $type_slug->id)->where('status', 1)->latest()->get();        
+        $types = PropertyType::withCount(['properties' => function ($q) { $q->where('status', 1); }])->get();
+
+        return view('property-type', compact('properties', 'types','type_slug'));     
+        
     }
 }
